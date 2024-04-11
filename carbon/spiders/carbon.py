@@ -4,7 +4,8 @@ from ..items import CarbonItem
 
 class Carbon(scrapy.Spider):
     name="carbon38"
-    start_urls=["https://www.carbon38.com/shop-all-activewear/tops"]
+    page_number=2
+    start_urls=["https://carbon38.com/collections/tops?filter.p.m.custom.available_or_waitlist=1&page=1&filter.p.m.custom.available_or_waitlist=1"]
 
 
     def parse(self, response):
@@ -24,3 +25,8 @@ class Carbon(scrapy.Spider):
         items['product_imagelink']=product_imagelink 
 
         yield items
+
+        next_page='https://carbon38.com/collections/tops?filter.p.m.custom.available_or_waitlist=1&page=' + str(Carbon.page_number) +'&filter.p.m.custom.available_or_waitlist=1'
+        if Carbon.page_number<50:
+            Carbon.page_number+=1
+            yield response.follow(next_page,callback=self.parse)
